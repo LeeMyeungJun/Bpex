@@ -117,7 +117,7 @@ public abstract class PropsUnityObject : MonoBehaviour
             /// if still not stored, use childs renderer
             if (ourRenderer == null)
             {
-                Transform myRootChild = Transform.FindChild("JNT_Root");
+                Transform myRootChild = Transform.Find("JNT_Root");
                 if(myRootChild != null)
                     ourRenderer = myRootChild.GetComponent<Renderer>();
             }
