@@ -1,16 +1,19 @@
-ï»¿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(PlayerInput))]
-[RequireComponent(typeof(PlayerMovement))]
-public class PlayerController : MonoBehaviour
+[RequireComponent(typeof(PlayerRigidbodyMovement))]
+[RequireComponent(typeof(CapsuleCollider))]
+[RequireComponent(typeof(Rigidbody))]
+public class PlayerRigidbodyController : MonoBehaviour
 {
     public Status status;
     public LayerMask collisionLayer; //Default
-    public float crouchHeight = 1f;
+    public float crouchHeight = 1.7f;
+    public float unCrouchHeight = 1.98f;
     public PlayerInfo info;
     [SerializeField]
     private float sprintTime = 6f;
@@ -20,23 +23,29 @@ public class PlayerController : MonoBehaviour
     private float sprintMinimum = 2f;
 
     new CameraMovement camera;
-    PlayerMovement movement;
+    PlayerRigidbodyMovement movement;
     PlayerInput playerInput;
     AnimateLean animateLean;
     AnimateCameraLevel animateCamLevel;
-    AnimateCharacter animCharacter;
+    //AnimateCharacter animCharacter;
 
     bool canInteract;
     bool forceSprintReserve = false;
-    
+
     float crouchCamAdjust;
     float stamina;
 
     public StatusEvent onStatusChange;
     public CharacterAnimEvent onAnimChange;
-    List<MovementType> movements;
-    WallrunMovement wallrun;
-    SurfaceSwimmingMovement swimming;
+    List<MovementRigidbodyType> movements;
+    WallrunMovementRb wallrun;
+    //SurfaceSwimmingMovement swimming;
+
+
+    //¼öÁ¤Áß
+    float UnCrouchCenter = 0.13f;
+    float CrouchCenter = 0.0f;
+    CapsuleCollider capsuleCollider = null; 
 
     public void ChangeStatus(Status s)
     {
@@ -45,13 +54,12 @@ public class PlayerController : MonoBehaviour
         if (onAnimChange != null)
             onAnimChange.Invoke(status, s);
 
-
         status = s;
 
         if (onStatusChange != null)
             onStatusChange.Invoke(status, null);
 
-   
+
 
     }
     public void ChangeStatus(Status s, Func<IKData> call)
@@ -68,13 +76,13 @@ public class PlayerController : MonoBehaviour
 
     public void AddToStatusChange(UnityAction<Status, Func<IKData>> action)
     {
-        if(onStatusChange == null)
+        if (onStatusChange == null)
             onStatusChange = new StatusEvent();
 
         onStatusChange.AddListener(action);
     }
     //CharacterAnimation
-    public void AddToStatusChange(UnityAction<Status,Status> action)
+    public void AddToStatusChange(UnityAction<Status, Status> action)
     {
         if (onAnimChange == null)
             onAnimChange = new CharacterAnimEvent();
@@ -82,43 +90,49 @@ public class PlayerController : MonoBehaviour
         onAnimChange.AddListener(action);
     }
 
-    public void AddMovementType(MovementType move)
+    public void AddMovementType(MovementRigidbodyType move)
     {
-        if (movements == null) movements = new List<MovementType>();
+        if (movements == null) movements = new List<MovementRigidbodyType>();
         move.SetPlayerComponents(movement, playerInput);
 
-        if ((move as WallrunMovement) != null) //If this move type is a Wallrunning
-            wallrun = (move as WallrunMovement);
-        else if ((move as SurfaceSwimmingMovement) != null) //If this move type is a Surface Swimming
-            swimming = (move as SurfaceSwimmingMovement);
+        if ((move as WallrunMovementRb) != null) //If this move type is a Wallrunning
+            wallrun = (move as WallrunMovementRb);
+        //else if ((move as SurfaceSwimmingMovementRb) != null) //If this move type is a Surface Swimming
+        //    swimming = (move as SurfaceSwimmingMovementRb);
 
         movements.Add(move);
     }
 
-    public SurfaceSwimmingMovement GetSwimmingMovement()
-    {
-        return swimming;
-    }
+    //public SurfaceSwimmingMovement GetSwimmingMovement()
+    //{
+    //    return swimming;
+    //}
 
-    private void Start()
+    private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
 
-        movement = GetComponent<PlayerMovement>();
-        movement.AddToReset(() => { status = Status.walking; });
+        movement = GetComponent<PlayerRigidbodyMovement>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
+
 
         camera = GetComponentInChildren<CameraMovement>();
-        camera.SetLockRot(false);
         if (GetComponentInChildren<AnimateLean>())
             animateLean = GetComponentInChildren<AnimateLean>();
         if (GetComponentInChildren<AnimateCameraLevel>())
             animateCamLevel = GetComponentInChildren<AnimateCameraLevel>();
-        if (GetComponentInChildren<AnimateCharacter>())
-            animCharacter = GetComponentInChildren<AnimateCharacter>();
+        //if (GetComponentInChildren<AnimateCharacter>())
+        //    animCharacter = GetComponentInChildren<AnimateCharacter>();
 
-        info = new PlayerInfo(movement.controller.radius, movement.controller.height);
+    }
+    private void Start()
+    {
+        movement.AddToReset(() => { status = Status.walking; });
+        info = new PlayerInfo(0.5f, unCrouchHeight); // Ä³¸¯ÅÍ raius µÑ·¹¶û , ³ôÀÌ Å°°ª ³Ö¾îÁà¾ßÇÔ
         crouchCamAdjust = (crouchHeight - info.height) / 2f;
         stamina = sprintTime;
+        Uncrouch();
+
     }
 
     /******************************* UPDATE ******************************/
@@ -130,9 +144,9 @@ public class PlayerController : MonoBehaviour
 
         //Checks
         CheckCrouching();
-        foreach (MovementType moveType in movements)
+        foreach (MovementRigidbodyType moveType in movements)
         {
-            if(moveType.enabled)
+            if (moveType.enabled)
                 moveType.Check(canInteract);
         }
 
@@ -140,7 +154,7 @@ public class PlayerController : MonoBehaviour
         UpdateLean();
         UpdateCamLevel();
 
-        animCharacter.UpdateMoveAnim(movement.moveDirection.normalized, isSprinting(), playerInput.Jump(), movement.grounded);
+        //animCharacter.UpdateMoveAnim(movement.moveDirection.normalized, isSprinting(), playerInput.Jump(), movement.grounded);
 
     }
 
@@ -213,7 +227,7 @@ public class PlayerController : MonoBehaviour
         if (animateCamLevel == null) return;
 
         float level = 0f;
-        if(status == Status.crouching || status == Status.sliding || status == Status.vaulting || status == Status.climbingLedge || status == Status.underwaterSwimming)
+        if (status == Status.crouching || status == Status.sliding || status == Status.vaulting || status == Status.climbingLedge || status == Status.underwaterSwimming)
             level = crouchCamAdjust;
         animateCamLevel.UpdateLevel(level);
     }
@@ -237,7 +251,7 @@ public class PlayerController : MonoBehaviour
     /******************************** MOVE *******************************/
     void FixedUpdate()
     {
-        foreach (MovementType moveType in movements)
+        foreach (MovementRigidbodyType moveType in movements)
         {
             if (status == moveType.changeTo)
             {
@@ -262,7 +276,7 @@ public class PlayerController : MonoBehaviour
         {
             if (status == Status.crouching)
             {
-                if (!Uncrouch()) 
+                if (!Uncrouch())
                     return;
             }
 
@@ -279,7 +293,7 @@ public class PlayerController : MonoBehaviour
     public bool isWalking()
     {
         if (status == Status.walking || status == Status.crouching)
-            return (movement.controller.velocity.magnitude > 0f && movement.grounded);
+            return (movement.rb.velocity.magnitude > 0f && movement.grounded);
         else
             return false;
     }
@@ -287,7 +301,7 @@ public class PlayerController : MonoBehaviour
     {
         return (status == Status.crouching);
     }
-   
+
     void CheckCrouching()
     {
         if (!movement.grounded || (int)status > 2) return;
@@ -307,10 +321,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Slide()
+    {
+        capsuleCollider.center = new Vector3(0, CrouchCenter, 0);
+        capsuleCollider.height = crouchHeight;
+    }
+
+
     public void Crouch(bool setStatus)
     {
-        movement.controller.height = crouchHeight;
-        if(setStatus) ChangeStatus(Status.crouching);
+        capsuleCollider.center = new Vector3(0, CrouchCenter, 0);
+        capsuleCollider.height = crouchHeight;
+        if (setStatus) ChangeStatus(Status.crouching);
     }
 
     public bool Uncrouch()
@@ -318,7 +340,10 @@ public class PlayerController : MonoBehaviour
         Vector3 bottom = transform.position - (Vector3.up * ((crouchHeight / 2) - info.radius));
         bool isBlocked = Physics.SphereCast(bottom, info.radius, Vector3.up, out var hit, info.height - info.radius, collisionLayer);
         if (isBlocked) return false; //If we have something above us, do nothing and return
-        movement.controller.height = info.height;
+
+        capsuleCollider.center = new Vector3(0, UnCrouchCenter, 0);
+        capsuleCollider.height = unCrouchHeight;
+        //movement.controller.height = info.height;
         ChangeStatus(Status.walking);
         return true;
     }
@@ -341,4 +366,3 @@ public class PlayerController : MonoBehaviour
         return (Physics.CapsuleCastAll(top, bottom, 0.25f, transform.right * dir, 0.05f, layer).Length >= 1);
     }
 }
-
