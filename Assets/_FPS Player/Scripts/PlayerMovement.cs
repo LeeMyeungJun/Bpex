@@ -199,5 +199,6 @@ public class PlayerMovement : InterpolatedTransform
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         contactPoint = hit.point;
+
     }
 }
