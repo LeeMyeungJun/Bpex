@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -54,7 +55,6 @@ public class CameraMovement : MonoBehaviour
         // Interpolate mouse movement over time to apply smoothing delta.
         _smoothMouse.x = Mathf.Lerp(_smoothMouse.x, mouseDelta.x, 1f / smoothing.x);
         _smoothMouse.y = Mathf.Lerp(_smoothMouse.y, mouseDelta.y, 1f / smoothing.y);
-
         // Find the absolute mouse movement value from point zero.
         _mouseAbsolute += _smoothMouse;
         // Clamp and apply the local x value first, so as not to be affected by world transforms.
@@ -94,6 +94,14 @@ public class CameraMovement : MonoBehaviour
             }
         }
     }
+    public void DoFov(float endValue)
+    {
+        GetComponent<Camera>().DOFieldOfView(endValue, 0.25f);
+    }
 
- 
+    public void DoTilt(float zTilt)
+    {
+        transform.DOLocalRotate(new Vector3(0, 0, zTilt), 0.25f);
+    }
+
 }

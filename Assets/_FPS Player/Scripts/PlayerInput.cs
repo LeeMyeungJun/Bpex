@@ -16,6 +16,7 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
+
     public Vector2 down
     {
         get { return _down; }
