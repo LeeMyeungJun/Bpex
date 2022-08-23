@@ -38,7 +38,7 @@ public class PlayerMovementAdvanced : MonoBehaviour
     [Header("Ground Check")]
     public float playerHeight;
     public LayerMask whatIsGround;
-    bool grounded;
+    public bool grounded;
 
     [Header("Slope Handling")]
     public float maxSlopeAngle;
@@ -51,7 +51,7 @@ public class PlayerMovementAdvanced : MonoBehaviour
     float horizontalInput;
     float verticalInput;
 
-    Vector3 moveDirection;
+    public Vector3 moveDirection;
 
     Rigidbody rb;
 
@@ -73,6 +73,8 @@ public class PlayerMovementAdvanced : MonoBehaviour
     public TextMeshProUGUI text_speed;
     public TextMeshProUGUI text_mode;
 
+    public Transform groundPosition;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -86,7 +88,9 @@ public class PlayerMovementAdvanced : MonoBehaviour
     private void Update()
     {
         // ground check
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
+        grounded = Physics.Raycast(groundPosition.position, Vector3.down, 0.1f, whatIsGround);
+
+        Debug.Log(grounded);
 
         MyInput();
         SpeedControl();
@@ -328,5 +332,13 @@ public class PlayerMovementAdvanced : MonoBehaviour
     {
         float mult = Mathf.Pow(10.0f, (float)digits);
         return Mathf.Round(value * mult) / mult;
+    }
+    public bool isSprinting()
+    {
+        return (state == MovementState.sprinting && grounded);
+    }
+    public bool isAir()
+    {
+        return (state == MovementState.air && !grounded);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AnimateCharacter : MonoBehaviour
 {
-    PlayerController player;
+    Player player;
 
     Animator ani;
     public float moveSpeed = 0.5f;
@@ -12,8 +12,8 @@ public class AnimateCharacter : MonoBehaviour
     void Start()
     {
         ani = GetComponent<Animator>();
-        if (GetComponentInParent<PlayerController>())
-            player = GetComponentInParent<PlayerController>();
+        if (GetComponentInParent<Player>())
+            player = GetComponentInParent<Player>();
         player.AddToStatusChange(CharacterAnimChange);
     }
 
@@ -33,7 +33,7 @@ public class AnimateCharacter : MonoBehaviour
         ani.SetBool("IsJumping", jumped);
     }
 
-    public void CharacterAnimChange(Status prevStatus, Status newStatus)
+    public void CharacterAnimChange(PlayerMovementAdvanced.MovementState prevStatus, PlayerMovementAdvanced.MovementState newStatus)
     {
         ani.SetBool("IsWallRunning", false);
         ani.SetBool("IsCrouch", false);
@@ -44,45 +44,66 @@ public class AnimateCharacter : MonoBehaviour
         ani.SetBool("IsLedgeUp", false);
 
         player.LockRot(false);
+
         switch (newStatus)
         {
-            case Status.idle:
+            case PlayerMovementAdvanced.MovementState.walking:
                 break;
-            case Status.walking:
+            case PlayerMovementAdvanced.MovementState.sprinting:
                 break;
-            case Status.crouching:
-                ani.SetBool("IsCrouch", true);
-                break;
-            case Status.sprinting:
-                break;
-            case Status.sliding:
-                player.LockRot(true);
-                ani.SetBool("IsSliding", true);
-                break;
-            case Status.climbingLadder:
-                player.LockRot(true);
-                ani.SetBool("IsLadder", true);
-                break;
-            case Status.wallRunning:
+            case PlayerMovementAdvanced.MovementState.wallrunning:
                 ani.SetBool("IsWallRunning", true);
                 ani.SetFloat("WallRunDir", player.getWallrunDir());
                 break;
-            case Status.vaulting:
-                ani.SetBool("IsVault", true);
+            case PlayerMovementAdvanced.MovementState.crouching:
+                ani.SetBool("IsCrouch", true);
                 break;
-            case Status.grabbedLedge:
+            case PlayerMovementAdvanced.MovementState.sliding:
                 player.LockRot(true);
-                ani.SetBool("IsLedge", true);
+                ani.SetBool("IsSliding", true);
                 break;
-            case Status.climbingLedge:
-                player.LockRot(true);
-                ani.SetBool("IsLedgeUp", true);
-                break;
-            case Status.surfaceSwimming:
-                break;
-            case Status.underwaterSwimming:
+            case PlayerMovementAdvanced.MovementState.air:
                 break;
         }
+        //switch (newStatus)
+        //{
+        //    case Status.idle:
+        //        break;
+        //    case Status.walking:
+        //        break;
+        //    case Status.crouching:
+        //        ani.SetBool("IsCrouch", true);
+        //        break;
+        //    case Status.sprinting:
+        //        break;
+        //    case Status.sliding:
+        //        player.LockRot(true);
+        //        ani.SetBool("IsSliding", true);
+        //        break;
+        //    case Status.climbingLadder:
+        //        player.LockRot(true);
+        //        ani.SetBool("IsLadder", true);
+        //        break;
+        //    case Status.wallRunning:
+        //        ani.SetBool("IsWallRunning", true);
+        //        ani.SetFloat("WallRunDir", player.getWallrunDir());
+        //        break;
+        //    case Status.vaulting:
+        //        ani.SetBool("IsVault", true);
+        //        break;
+        //    case Status.grabbedLedge:
+        //        player.LockRot(true);
+        //        ani.SetBool("IsLedge", true);
+        //        break;
+        //    case Status.climbingLedge:
+        //        player.LockRot(true);
+        //        ani.SetBool("IsLedgeUp", true);
+        //        break;
+        //    case Status.surfaceSwimming:
+        //        break;
+        //    case Status.underwaterSwimming:
+        //        break;
+        //}
 
         //ani.CrossFade(, 0.25f);
     }

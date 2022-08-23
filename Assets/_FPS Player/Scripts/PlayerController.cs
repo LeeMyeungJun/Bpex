@@ -50,9 +50,6 @@ public class PlayerController : MonoBehaviour
 
         if (onStatusChange != null)
             onStatusChange.Invoke(status, null);
-
-   
-
     }
     public void ChangeStatus(Status s, Func<IKData> call)
     {

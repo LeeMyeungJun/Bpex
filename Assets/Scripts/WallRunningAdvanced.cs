@@ -30,6 +30,7 @@ public class WallRunningAdvanced : MonoBehaviour
     private RaycastHit rightWallhit;
     private bool wallLeft;
     private bool wallRight;
+    private int wallDir = 1;
 
     [Header("Exiting")]
     private bool exitingWall;
@@ -45,6 +46,8 @@ public class WallRunningAdvanced : MonoBehaviour
     public CameraMovement cam;
     private PlayerMovementAdvanced pm;
     private Rigidbody rb;
+
+
 
     private void Start()
     {
@@ -138,7 +141,16 @@ public class WallRunningAdvanced : MonoBehaviour
         if (wallLeft) cam.DoTilt(-5f);
         if (wallRight) cam.DoTilt(5f);
     }
+    public int getWallDir()
+    {
+        wallDir = 0;
+        if (wallRight)
+            wallDir = 1;
+        if (wallLeft)
+            wallDir = -1;
 
+        return wallDir;
+    }
     private void WallRunningMovement()
     {
         rb.useGravity = useGravity;
