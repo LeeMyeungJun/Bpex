@@ -12,7 +12,6 @@ public class Player : MonoBehaviour
     public RigCharacterAnimEvent onAnimChange;
     new CameraMovement camera;
     WallRunningAdvanced wallrun;
-
     private void Start()
     {
         if (GetComponentInChildren<AnimateCharacter>())
@@ -26,15 +25,12 @@ public class Player : MonoBehaviour
 
         movement = GetComponentInChildren<PlayerMovementAdvanced>();
     }
-    public void ChangeStatus(PlayerMovementAdvanced.MovementState s)
+    public void ChangeStatus(PlayerMovementAdvanced.MovementState prevState, PlayerMovementAdvanced.MovementState newState)
     {
-        if (movement.state == s) return;
+        if (prevState == newState) return;
 
         if (onAnimChange != null)
-            onAnimChange.Invoke(movement.state, s);
-
-        movement.state = s;
-
+            onAnimChange.Invoke(prevState, newState);
     }
     public void AddToStatusChange(UnityAction<PlayerMovementAdvanced.MovementState, PlayerMovementAdvanced.MovementState> action)
     {
@@ -61,4 +57,15 @@ public class Player : MonoBehaviour
         animCharacter.UpdateMoveAnim(movement.moveDirection.normalized, movement.isSprinting(), movement.isAir(), movement.grounded);
     }
 
+}
+
+public class ColliderInfo
+{
+    public Vector3 center;
+    public float height;
+    public ColliderInfo(Vector3 c, float h)
+    {
+        center = c;
+        height = h;
+    }
 }

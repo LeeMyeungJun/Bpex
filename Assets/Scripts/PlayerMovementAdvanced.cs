@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+[RequireComponent(typeof(Player))]
 public class PlayerMovementAdvanced : MonoBehaviour
 {
+    Player player;
     [Header("Movement")]
     private float moveSpeed;
     private float desiredMoveSpeed;
@@ -27,8 +29,11 @@ public class PlayerMovementAdvanced : MonoBehaviour
 
     [Header("Crouching")]
     public float crouchSpeed;
-    public float crouchYScale;
-    private float startYScale;
+    ColliderInfo crouchCollider;
+    ColliderInfo startCollider;
+    CapsuleCollider playerCollider;
+    //public float crouchYScale;
+    //private float startYScale;
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -78,11 +83,16 @@ public class PlayerMovementAdvanced : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        player = GetComponent<Player>();
         rb.freezeRotation = true;
 
         readyToJump = true;
+        playerCollider = GetComponentInChildren<CapsuleCollider>();
+        crouchCollider = new ColliderInfo(new Vector3(0,0.74f,0),1.48f);
+        startCollider = new ColliderInfo(new Vector3(0, 1, 0), 2.0f);
 
-        startYScale = transform.localScale.y;
+        playerCollider.center = startCollider.center;
+        playerCollider.height = startCollider.height;
     }
 
     private void Update()
@@ -127,23 +137,28 @@ public class PlayerMovementAdvanced : MonoBehaviour
         // start crouch
         if (Input.GetKeyDown(crouchKey) && horizontalInput == 0 && verticalInput == 0)
         {
-            transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
-            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+            //transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
+            playerCollider.center = crouchCollider.center;
+            playerCollider.height = crouchCollider.height;
 
+            rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
             crouching = true;
         }
 
         // stop crouch
         if (Input.GetKeyUp(crouchKey))
         {
-            transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
-
+            //transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+            playerCollider.center = startCollider.center;
+            playerCollider.height = startCollider.height;
             crouching = false;
         }
     }
 
     private void StateHandler()
     {
+        MovementState prevState, newState;
+        prevState = state;
         // Mode - Wallrunning
         if (wallrunning)
         {
@@ -190,6 +205,9 @@ public class PlayerMovementAdvanced : MonoBehaviour
         {
             state = MovementState.air;
         }
+        newState = state;
+
+        player.ChangeStatus(prevState,newState);
 
         // check if desired move speed has changed drastically
         if (Mathf.Abs(desiredMoveSpeed - lastDesiredMoveSpeed) > 4f && moveSpeed != 0)
