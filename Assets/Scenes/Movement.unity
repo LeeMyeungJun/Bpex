@@ -22625,18 +22625,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 4334360473009763769, guid: 9ad730a0130d52c46888239c3e729998, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4334360473009763769, guid: 9ad730a0130d52c46888239c3e729998, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.64
-      objectReference: {fileID: 0}
-    - target: {fileID: 4334360473009763769, guid: 9ad730a0130d52c46888239c3e729998, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.18
-      objectReference: {fileID: 0}
     - target: {fileID: 4334360473413641481, guid: 9ad730a0130d52c46888239c3e729998, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -22685,13 +22673,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 4334360473413641484, guid: 9ad730a0130d52c46888239c3e729998, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4334360473413641486, guid: 9ad730a0130d52c46888239c3e729998, type: 3}
-      propertyPath: wallCheckDistance
-      value: 1
+      propertyPath: minJumpHeight
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4334360473413641487, guid: 9ad730a0130d52c46888239c3e729998, type: 3}
       propertyPath: text_mode

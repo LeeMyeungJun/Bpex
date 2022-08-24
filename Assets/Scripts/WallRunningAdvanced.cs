@@ -47,8 +47,6 @@ public class WallRunningAdvanced : MonoBehaviour
     private PlayerMovementAdvanced pm;
     private Rigidbody rb;
 
-
-
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
