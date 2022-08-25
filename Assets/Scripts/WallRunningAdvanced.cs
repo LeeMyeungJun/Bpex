@@ -47,6 +47,9 @@ public class WallRunningAdvanced : MonoBehaviour
     private PlayerMovementAdvanced pm;
     private Rigidbody rb;
 
+    GameObject startOverLapWallCheck = null;
+    GameObject endOverLapWallCheck = null;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -86,7 +89,7 @@ public class WallRunningAdvanced : MonoBehaviour
         downwardsRunning = Input.GetKey(downwardsRunKey);
 
         // State 1 - Wallrunning
-        if((wallLeft || wallRight) && verticalInput > 0 && AboveGround() && !exitingWall)
+        if((wallLeft || wallRight) && verticalInput > 0 && AboveGround() && !exitingWall && OverLapWallCheck())
         {
             if (!pm.wallrunning)
                 StartWallRun();
@@ -123,6 +126,12 @@ public class WallRunningAdvanced : MonoBehaviour
         {
             if (pm.wallrunning)
                 StopWallRun();
+
+            if (pm.grounded)
+            {
+                startOverLapWallCheck = null;
+                endOverLapWallCheck = null;
+            }
         }
     }
 
@@ -136,8 +145,16 @@ public class WallRunningAdvanced : MonoBehaviour
 
         // apply camera effects
         cam.DoFov(90f);
-        if (wallLeft) cam.DoTilt(-5f);
-        if (wallRight) cam.DoTilt(5f);
+        if (wallLeft)
+        {
+            cam.DoTilt(-5f);
+            startOverLapWallCheck = leftWallhit.transform.gameObject;
+        }
+        if (wallRight) 
+        {
+            startOverLapWallCheck = rightWallhit.transform.gameObject;
+            cam.DoTilt(5f);
+        } 
     }
     public int getWallDir()
     {
@@ -181,7 +198,7 @@ public class WallRunningAdvanced : MonoBehaviour
     private void StopWallRun()
     {
         pm.wallrunning = false;
-
+        endOverLapWallCheck = startOverLapWallCheck;
         // reset camera effects
         cam.DoFov(80f);
         cam.DoTilt(0f);
@@ -200,5 +217,24 @@ public class WallRunningAdvanced : MonoBehaviour
         // reset y velocity and add force
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         rb.AddForce(forceToApply, ForceMode.Impulse);
+    }
+
+    private bool OverLapWallCheck()
+    {
+        if (endOverLapWallCheck == null)
+            return true;
+
+        if (wallLeft)
+        {
+            if (leftWallhit.transform.gameObject == endOverLapWallCheck)
+                return false;
+        }
+
+        if (wallRight)
+        {
+            if (rightWallhit.transform.gameObject == endOverLapWallCheck)
+                return false;
+        }
+        return true;
     }
 }
