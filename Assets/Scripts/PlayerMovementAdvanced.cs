@@ -68,12 +68,14 @@ public class PlayerMovementAdvanced : MonoBehaviour
         wallrunning,
         crouching,
         sliding,
+        climbingLadder,
         air
     }
 
     public bool sliding;
     public bool crouching;
     public bool wallrunning;
+    public bool climbingLadder;
 
     public TextMeshProUGUI text_speed;
     public TextMeshProUGUI text_mode;
@@ -199,7 +201,11 @@ public class PlayerMovementAdvanced : MonoBehaviour
             state = MovementState.walking;
             desiredMoveSpeed = walkSpeed;
         }
-
+        else if(climbingLadder)
+        {
+            state = MovementState.climbingLadder;
+            desiredMoveSpeed = walkSpeed;
+        }
         // Mode - Air
         else
         {
@@ -310,6 +316,12 @@ public class PlayerMovementAdvanced : MonoBehaviour
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
+    public void Jump(Vector3 dir, float mult)
+    {
+        rb.AddForce(dir * mult, ForceMode.Impulse);
+        ResetJump();
+    }
+
     private void ResetJump()
     {
         readyToJump = true;
@@ -358,5 +370,12 @@ public class PlayerMovementAdvanced : MonoBehaviour
     public bool isAir()
     {
         return (state == MovementState.air && !grounded);
+    }
+    public bool hasObjectInfront(float dis, LayerMask layer)
+    {
+        Vector3 top = transform.position + (transform.forward * 0.25f);
+        Vector3 bottom = top - (transform.up * playerCollider.height);
+
+        return (Physics.CapsuleCastAll(top, bottom, 0.25f, transform.forward, dis, layer).Length >= 1);
     }
 }
