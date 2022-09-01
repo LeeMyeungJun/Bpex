@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwingTrap : MonoBehaviour
+public class Swing : MonoBehaviour
 {
     public int speed = 0;
     public int angle = 0;

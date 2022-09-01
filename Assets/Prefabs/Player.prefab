@@ -1007,7 +1007,7 @@ MonoBehaviour:
   playerHeight: 2
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 320
   grounded: 0
   maxSlopeAngle: 40
   orientation: {fileID: 4334360473464703118}
@@ -1016,6 +1016,7 @@ MonoBehaviour:
   sliding: 0
   crouching: 0
   wallrunning: 0
+  climbingLadder: 0
   text_speed: {fileID: 0}
   text_mode: {fileID: 0}
   groundPosition: {fileID: 5589241207035864976}
@@ -1046,7 +1047,7 @@ MonoBehaviour:
   upwardsRunKey: 304
   downwardsRunKey: 99
   wallCheckDistance: 1
-  minJumpHeight: 2
+  minJumpHeight: 0.5
   exitWallTime: 0.2
   useGravity: 1
   gravityCounterForce: 20
@@ -1333,7 +1334,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7612263086942286476}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.05, z: 0}
+  m_LocalPosition: {x: 0, y: 0.037, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4334360473413641481}

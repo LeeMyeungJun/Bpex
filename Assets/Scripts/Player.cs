@@ -25,6 +25,17 @@ public class Player : MonoBehaviour
 
         movement = GetComponentInChildren<PlayerMovementAdvanced>();
     }
+
+    public virtual void ResetPositionTo(Vector3 resetTo)
+    {
+        StartCoroutine(forcePosition());
+        IEnumerator forcePosition()
+        {
+            transform.position = resetTo;
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     public void ChangeStatus(PlayerMovementAdvanced.MovementState prevState, PlayerMovementAdvanced.MovementState newState)
     {
         if (prevState == newState) return;

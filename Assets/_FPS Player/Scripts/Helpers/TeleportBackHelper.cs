@@ -7,10 +7,15 @@ public class TeleportBackHelper : MonoBehaviour
     public Vector3 teleportTo = Vector3.zero;
     private void OnTriggerEnter(Collider other)
     {
-        InterpolatedTransform movable = null;
-        if ((movable = other.GetComponent<InterpolatedTransform>()) == null) return;
-        if (movable as PlayerMovement)
-            movable.ResetPositionTo(teleportTo);
+        if(other.GetComponent<Player>())
+        {
+            other.GetComponent<Player>().ResetPositionTo(teleportTo);
+        }
+
+        //InterpolatedTransform movable = null;
+        //if ((movable = other.GetComponent<InterpolatedTransform>()) == null) return;
+        //if (movable as PlayerMovement)
+        //    movable.ResetPositionTo(teleportTo);
     }
 
 }
