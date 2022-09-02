@@ -347,15 +347,15 @@ public class PlayerMovementAdvanced : MonoBehaviour
 
     private void TextStuff()
     {
-        Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        //Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        if (OnSlope())
-            text_speed.SetText("Speed: " + Round(rb.velocity.magnitude, 1));
+        //if (OnSlope())
+        //    text_speed.SetText("Speed: " + Round(rb.velocity.magnitude, 1));
 
-        else
-            text_speed.SetText("Speed: " + Round(flatVel.magnitude, 1));
+        //else
+        //    text_speed.SetText("Speed: " + Round(flatVel.magnitude, 1));
 
-        text_mode.SetText(state.ToString());
+        //text_mode.SetText(state.ToString());
     }
 
     public static float Round(float value, int digits)
