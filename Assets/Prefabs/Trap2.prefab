@@ -1760,6 +1760,7 @@ GameObject:
   - component: {fileID: 7531549360596209248}
   - component: {fileID: 7531549360596209249}
   - component: {fileID: 7531549360596209262}
+  - component: {fileID: 1051107384924679567}
   m_Layer: 0
   m_Name: Trap2
   m_TagString: Untagged
@@ -7228,6 +7229,20 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &1051107384924679567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7531549360596209263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43a5652ae25c62c41ae7deacf860a3bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotSpeed: 10
+  root: {x: 0, y: 1, z: 0}
 --- !u!1 &7531549361039934024
 GameObject:
   m_ObjectHideFlags: 0

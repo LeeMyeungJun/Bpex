@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5935990082306108791}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0.11000061, y: -0.68, z: 0.24}
+  m_LocalPosition: {x: 0.17, y: -0.9, z: 0.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5935990083631661625}
@@ -596,6 +596,7 @@ GameObject:
   - component: {fileID: 5935990083631661620}
   - component: {fileID: 5935990083631661621}
   - component: {fileID: 5935990083631661622}
+  - component: {fileID: 2380245970454648644}
   m_Layer: 0
   m_Name: Trap3
   m_TagString: Untagged
@@ -611,7 +612,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5935990083631661623}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.647749, y: 16.056177, z: -43.89}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children:
   - {fileID: 5935990083953928141}
@@ -6062,6 +6063,20 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &2380245970454648644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5935990083631661623}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43a5652ae25c62c41ae7deacf860a3bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotSpeed: 10
+  root: {x: 0, y: 1, z: 0}
 --- !u!1 &5935990083953928142
 GameObject:
   m_ObjectHideFlags: 0
@@ -6091,7 +6106,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5935990083953928142}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.11000061, y: 0.278, z: -0.15999985}
+  m_LocalPosition: {x: 0, y: 0.139, z: -0.8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5935990083631661625}
